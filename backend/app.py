@@ -1,13 +1,17 @@
-from flask import Flask, request, jsonify, make_response
-from flask_cors import CORS
+from flask import Flask, request, jsonify, make_response, render_template
 import sqlite3
 import os
 from datetime import datetime
 from openpyxl import Workbook
 from io import BytesIO
 
-app = Flask(__name__)
-CORS(app)
+app = Flask(__name__, 
+            static_folder='static',
+            template_folder='templates')
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'admin123'
@@ -304,6 +308,16 @@ def admin_login():
     else:
         return jsonify({'error': '用户名或密码错误'}), 401
 
+@app.route('/<path:path>')
+def catch_all(path):
+    if path.startswith('api/'):
+        return jsonify({'error': 'API路由不存在'}), 404
+    
+    if path.startswith('static/'):
+        return '', 404
+    
+    return render_template('index.html')
+
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='127.0.0.1', port=5000)

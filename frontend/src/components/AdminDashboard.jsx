@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../utils/api'
 import './AdminDashboard.css'
 
 function AdminDashboard() {
@@ -11,19 +11,10 @@ function AdminDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [message, setMessage] = useState(null)
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem('adminToken')
-    return {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }
-  }
-
   const fetchFeedback = async () => {
     setLoading(true)
     try {
-      const response = await axios.get('/api/feedback', {
+      const response = await api.get('/api/feedback', {
         params: {
           sort_by: 'created_at',
           sort_order: 'desc'
@@ -40,7 +31,7 @@ function AdminDashboard() {
   const fetchStatistics = async () => {
     setStatsLoading(true)
     try {
-      const response = await axios.get('/api/statistics', getAuthHeaders())
+      const response = await api.get('/api/statistics')
       setStatistics(response.data)
     } catch (error) {
       console.error('获取统计数据失败:', error)
@@ -62,7 +53,7 @@ function AdminDashboard() {
     if (!deleteConfirm) return
     
     try {
-      await axios.delete(`/api/feedback/${deleteConfirm}`, getAuthHeaders())
+      await api.delete(`/api/feedback/${deleteConfirm}`)
       
       setMessage({
         type: 'success',
@@ -86,8 +77,7 @@ function AdminDashboard() {
 
   const handleExportExcel = async () => {
     try {
-      const response = await axios.get('/api/export/excel', {
-        ...getAuthHeaders(),
+      const response = await api.get('/api/export/excel', {
         responseType: 'blob'
       })
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../utils/api'
 import './FeedbackList.css'
 
 function FeedbackList() {
@@ -28,7 +28,7 @@ function FeedbackList() {
       params.sort_by = filters.sort_by
       params.sort_order = filters.sort_order
 
-      const response = await axios.get('/api/feedback', { params })
+      const response = await api.get('/api/feedback', { params })
       
       if (Array.isArray(response.data)) {
         setFeedbackList(response.data)
