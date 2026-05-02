@@ -5,6 +5,7 @@ import './FeedbackList.css'
 function FeedbackList() {
   const [feedbackList, setFeedbackList] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [filters, setFilters] = useState({
     food_rating: '',
     service_rating: '',
@@ -16,6 +17,7 @@ function FeedbackList() {
 
   const fetchFeedback = async () => {
     setLoading(true)
+    setError(null)
     try {
       const params = {}
       
@@ -27,9 +29,18 @@ function FeedbackList() {
       params.sort_order = filters.sort_order
 
       const response = await axios.get('/api/feedback', { params })
-      setFeedbackList(response.data)
+      
+      if (Array.isArray(response.data)) {
+        setFeedbackList(response.data)
+      } else {
+        console.error('API返回的数据不是数组:', response.data)
+        setError('服务器返回数据格式错误')
+        setFeedbackList([])
+      }
     } catch (error) {
       console.error('获取反馈列表失败:', error)
+      setError(error.response?.data?.error || '网络错误，请稍后重试')
+      setFeedbackList([])
     } finally {
       setLoading(false)
     }
@@ -181,6 +192,12 @@ function FeedbackList() {
           </button>
         </div>
       </div>
+
+      {error && (
+        <div className="alert alert-error">
+          ❌ {error}
+        </div>
+      )}
 
       {loading ? (
         <div className="loading">
