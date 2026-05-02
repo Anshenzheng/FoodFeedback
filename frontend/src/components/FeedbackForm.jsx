@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import api from '../utils/api'
 import './FeedbackForm.css'
 
 function FeedbackForm() {
@@ -36,7 +36,7 @@ function FeedbackForm() {
     setSuccess(false)
 
     try {
-      await axios.post('/api/feedback', {
+      await api.post('/api/feedback', {
         ...formData,
         food_rating: parseInt(formData.food_rating),
         service_rating: parseInt(formData.service_rating)

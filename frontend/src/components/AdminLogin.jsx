@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import api from '../utils/api'
 import { useNavigate } from 'react-router-dom'
 import './AdminLogin.css'
 
@@ -26,7 +26,7 @@ function AdminLogin({ onLogin }) {
     setError('')
 
     try {
-      const response = await axios.post('/api/admin/login', formData)
+      const response = await api.post('/api/admin/login', formData)
       
       localStorage.setItem('adminToken', response.data.token)
       localStorage.setItem('adminUsername', response.data.username)
